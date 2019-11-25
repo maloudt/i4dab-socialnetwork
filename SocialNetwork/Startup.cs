@@ -36,7 +36,9 @@ namespace SocialNetwork
                 sp.GetRequiredService<IOptions<SocialNetworkDatabaseSettings>>().Value);
             
             services.AddSingleton<UserService>();
-            
+            services.AddSingleton<PostService>();
+            services.AddSingleton<CommentService>();
+
             services.AddControllers();
         }
 
