@@ -13,6 +13,8 @@ namespace SocialNetwork
             Console.WriteLine();
             Console.WriteLine("Enter the name of the user to log in");
             var currentUser = Console.ReadLine();
+
+
         }
     }
 }

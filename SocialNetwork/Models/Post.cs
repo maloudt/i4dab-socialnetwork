@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -16,7 +17,7 @@ namespace SocialNetwork.Models
         [BsonElement("Content")] public string Content { get; set; }
         [BsonElement("Creation Time")] public DateTime CreationTime { get; set; }
 
-        [BsonElement("Comments")] public BsonArray Comments { get; set; }
+        [BsonElement("Comments")] public List<string> Comments { get; set; }
 
         public override string ToString()
         {

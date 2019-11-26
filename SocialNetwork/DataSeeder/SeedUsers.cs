@@ -10,25 +10,52 @@ namespace SocialNetwork.DataSeeder
     {
         public void Seed()
         {
-            var user1 = new User
-            {
-                Name = "Lars Kolund",
-                Age = 27,
-                Gender = "Male",
-                CircleMembers = new BsonArray() { "1a", "1b" },
-                BlockedUsers = new BsonArray() { "1c", "1d" }
-            };
-            Program.userService.Create(user1);
+            List<User> userList = new List<User>();
 
-            var user2 = new User
+            userList.Add(new User
+                {
+                    Name = "Lars Kolund",
+                    Age = 27,
+                    Gender = "Male",
+                    CircleMembers = new List<string>() {"a", "b"},
+                    BlockedUsers = new List<string>() { "c", "d" }
+            }
+            );
+
+            userList.Add(new User
+                {
+                    Name = "Mikkel Brambus",
+                    Age = 19,
+                    Gender = "Male",
+                    CircleMembers = new List<string>() { "a", "b" },
+                    BlockedUsers = new List<string>() { "c", "d" }
+            }
+            );
+
+            foreach (var u in userList)
             {
-                Name = "Mikkel Brambus",
-                Age = 19,
-                Gender = "Male",
-                CircleMembers = new BsonArray() {},
-                BlockedUsers = new BsonArray() {}
-            };
-            Program.userService.Create(user2);
+                Program.userService.Create(u);
+            }
+            
+            //var user1 = new User
+            //{
+            //    Name = "Lars Kolund",
+            //    Age = 27,
+            //    Gender = "Male",
+            //    CircleMembers = new BsonArray() {},
+            //    BlockedUsers = new BsonArray() {}
+            //};
+            //Program.userService.Create(user1);
+
+            //var user2 = new User
+            //{
+            //    Name = "Mikkel Brambus",
+            //    Age = 19,
+            //    Gender = "Male",
+            //    CircleMembers = new BsonArray() {},
+            //    BlockedUsers = new BsonArray() {}
+            //};
+            //Program.userService.Create(user2);
         }
     }
 }

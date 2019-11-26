@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 using SocialNetwork.Models;
 
@@ -15,7 +16,7 @@ namespace SocialNetwork.DataSeeder
                 Visibility = "Public",
                 Content = "Hello everyone!",
                 CreationTime = DateTime.Now,
-                Comments = new BsonArray() { "4a", "3b" }
+                Comments = new List<string>() {}
             };
             Program.postService.Create(post1);
 
