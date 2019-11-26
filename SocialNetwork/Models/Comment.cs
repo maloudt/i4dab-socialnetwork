@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+using System;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace SocialNetwork.Models
@@ -12,5 +13,7 @@ namespace SocialNetwork.Models
         public string Author { get; set; }
         [BsonElement("Text")]
         public string Text { get; set; }
+        [BsonElement("Creation Time")]
+        public DateTime CreationTime { get; set; }
     }
 }

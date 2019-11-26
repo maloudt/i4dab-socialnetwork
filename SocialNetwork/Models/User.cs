@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson;
+using System;
+using System.Collections.Generic;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace SocialNetwork.Models
@@ -15,7 +17,15 @@ namespace SocialNetwork.Models
         public int Age { get; set; }
         [BsonElement("Gender")]
         public string Gender { get; set; }
-        //public BsonArray CircleMembers { get; set; }
-        //public BsonArray BlockedUsers { get; set; }
+
+        [BsonElement("Circle Members")]
+        public BsonArray CircleMembers { get; set; }
+        [BsonElement("Blocked Users")]
+        public BsonArray BlockedUsers { get; set; }
+
+        public override string ToString()
+        {
+            return $"User({Id}, {Name}, {Age}, {Gender}, {CircleMembers}, {BlockedUsers})";
+        }
     }
 }

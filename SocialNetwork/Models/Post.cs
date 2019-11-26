@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson;
+using System;
+using System.Collections.Generic;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace SocialNetwork.Models
@@ -17,7 +19,9 @@ namespace SocialNetwork.Models
         [BsonElement("Content")]
         public string Content { get; set; }
         [BsonElement("Creation Time")]
-        public string CreationTime { get; set; }
-        //public BsonArray Comments { get; set; }
+        public DateTime CreationTime { get; set; }
+        
+        [BsonElement("Comments")]
+        public BsonArray Comments { get; set; }
     }
 }
