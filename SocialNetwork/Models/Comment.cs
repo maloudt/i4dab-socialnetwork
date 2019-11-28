@@ -10,12 +10,9 @@ namespace SocialNetwork.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [BsonElement("Author")]
-        public string Author { get; set; }
-        [BsonElement("Text")]
-        public string Text { get; set; }
-        [BsonElement("Creation Time")]
-        public DateTime CreationTime { get; set; }
+        [BsonElement("Author")] public string Author { get; set; }
+        [BsonElement("Text")] public string Text { get; set; }
+        [BsonElement("Creation Time")] public DateTime CreationTime { get; set; }
 
         public override string ToString()
         {

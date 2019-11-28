@@ -10,14 +10,14 @@ namespace SocialNetwork.DataSeeder
     {
         public void Seed()
         {
-            List<User> userList = new List<User>();
+            var userList = new List<User>();
 
             userList.Add(new User
                 {
                     Name = "Lars Kolund",
                     Age = 27,
                     Gender = "Male",
-                    CircleMembers = new List<string>() {"a", "b"},
+                    Circles = new List<string>() {"a", "b"},
                     BlockedUsers = new List<string>() { "c", "d" }
             }
             );
@@ -27,9 +27,19 @@ namespace SocialNetwork.DataSeeder
                     Name = "Mikkel Brambus",
                     Age = 19,
                     Gender = "Male",
-                    CircleMembers = new List<string>() { "a", "b" },
+                    Circles = new List<string>() { "a", "b" },
                     BlockedUsers = new List<string>() { "c", "d" }
             }
+            );
+
+            userList.Add(new User
+                {
+                Name = "Sara Nygaard",
+                Age = 23,
+                Gender = "Female",
+                Circles = new List<string>() { "a", "b" },
+                BlockedUsers = new List<string>() {"c", "d"}
+                }
             );
 
             foreach (var u in userList)
