@@ -3,15 +3,30 @@ using System.Collections.Generic;
 using System.Text;
 using MongoDB.Bson;
 using SocialNetwork.Models;
+using SocialNetwork.Services;
 
-namespace SocialNetwork.DataSeeder
+namespace SocialNetwork
 {
-    class SeedUsers : ISeed
+    class DataSeeder
     {
+        private readonly UserService _userService;
+        private readonly PostService _postService;
+        private List<User> _userList;
+        private List<Post> _postList;
+
+        public DataSeeder()
+        {
+            _userService = new UserService();
+            _postService = new PostService();
+        }
+
         public void Seed()
         {
+            _userService.RemoveAll();
+            _postService.RemoveAll();
+
             // create a list of users and add users to it
-            var userList = new List<User>
+            _userList = new List<User>
             {
                 new User
                 {
@@ -107,9 +122,9 @@ namespace SocialNetwork.DataSeeder
             // **************************************************
 
             // add users to database as
-            foreach (var u in userList)
+            foreach (var u in _userList)
             {
-                Program.userService.Create(u);
+                _userService.Create(u);
             }
 
 
@@ -122,188 +137,239 @@ namespace SocialNetwork.DataSeeder
             var user0circle1 = new Circle
             {
                CircleNumber = 1,
-               CircleMembers = new List<string>() { userList[1].Id, userList[2].Id }
+               CircleMembers = new List<string>() { _userList[1].Id, _userList[2].Id }
             };
 
             var user0circle2 = new Circle
             {
                 CircleNumber = 2,
-                CircleMembers = new List<string> { userList[3].Id, userList[4].Id, userList[5].Id }
+                CircleMembers = new List<string> { _userList[3].Id, _userList[4].Id, _userList[5].Id }
             };
 
             // get db user from id
-            var updateUser = Program.userService.Get(userList[0].Id);
+            var updateUser = _userService.Get(_userList[0].Id);
             // add circles to user
             updateUser.Circles.Add(user0circle1);
             updateUser.Circles.Add(user0circle2);
             // add blocked user to block list
-            updateUser.BlockedUsers.Add(userList[9].Id);
+            updateUser.BlockedUsers.Add(_userList[9].Id);
             // update db user to the new version that includes circles + blocked
-            Program.userService.Update(userList[0].Id, updateUser);
+            _userService.Update(_userList[0].Id, updateUser);
 
 
             // user 1 circles + blocked users *******************
             var user1circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[0].Id, userList[1].Id, userList[3].Id }
+                CircleMembers = new List<string> { _userList[0].Id, _userList[1].Id, _userList[3].Id }
             };
 
             var user1circle2 = new Circle
             {
                 CircleNumber = 2,
-                CircleMembers = new List<string> { userList[1].Id, userList[5].Id }
+                CircleMembers = new List<string> { _userList[1].Id, _userList[5].Id }
             };
 
-            updateUser = Program.userService.Get(userList[1].Id);
+            updateUser = _userService.Get(_userList[1].Id);
             updateUser.Circles.Add(user1circle1);
             updateUser.Circles.Add(user1circle2);
-            updateUser.BlockedUsers.Add(userList[9].Id);
-            Program.userService.Update(userList[1].Id, updateUser);
+            updateUser.BlockedUsers.Add(_userList[9].Id);
+            _userService.Update(_userList[1].Id, updateUser);
 
 
             // user 2 circles + blocked users *******************
             var user2circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[1].Id, userList[5].Id, userList[6].Id, userList[8].Id }
+                CircleMembers = new List<string> { _userList[1].Id, _userList[5].Id, _userList[6].Id, _userList[8].Id }
             };
 
-            updateUser = Program.userService.Get(userList[2].Id);
+            updateUser = _userService.Get(_userList[2].Id);
             updateUser.Circles.Add(user2circle1);
-            updateUser.BlockedUsers.Add(userList[9].Id);
-            Program.userService.Update(userList[2].Id, updateUser);
+            updateUser.BlockedUsers.Add(_userList[9].Id);
+            _userService.Update(_userList[2].Id, updateUser);
 
 
             // user 3 circles + blocked users *******************
             var user3circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[1].Id, userList[5].Id, userList[6].Id, userList[8].Id, userList[9].Id }
+                CircleMembers = new List<string> { _userList[1].Id, _userList[5].Id, _userList[6].Id, _userList[8].Id, _userList[9].Id }
             };
             var user3circle2 = new Circle
             {
                 CircleNumber = 2,
-                CircleMembers = new List<string> { userList[0].Id, userList[1].Id, userList[2].Id }
+                CircleMembers = new List<string> { _userList[0].Id, _userList[1].Id, _userList[2].Id }
             };
 
-            updateUser = Program.userService.Get(userList[3].Id);
+            updateUser = _userService.Get(_userList[3].Id);
             updateUser.Circles.Add(user3circle1);
             updateUser.Circles.Add(user3circle2);
-            updateUser.BlockedUsers.Add(userList[9].Id);
-            Program.userService.Update(userList[3].Id, updateUser);
+            updateUser.BlockedUsers.Add(_userList[9].Id);
+            _userService.Update(_userList[3].Id, updateUser);
 
 
             // user 4 circles + blocked users *******************
             var user4circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[2].Id, userList[3].Id, userList[7].Id }
+                CircleMembers = new List<string> { _userList[2].Id, _userList[3].Id, _userList[7].Id }
             };
             var user4circle2 = new Circle
             {
                 CircleNumber = 2,
-                CircleMembers = new List<string> {userList[6].Id, userList[8].Id }
+                CircleMembers = new List<string> {_userList[6].Id, _userList[8].Id }
             };
 
-            updateUser = Program.userService.Get(userList[4].Id);
+            updateUser = _userService.Get(_userList[4].Id);
             updateUser.Circles.Add(user4circle1);
             updateUser.Circles.Add(user4circle2);
             // no blocked users
-            Program.userService.Update(userList[4].Id, updateUser);
+            _userService.Update(_userList[4].Id, updateUser);
 
 
             // user 5 circles + blocked users *******************
             var user5circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[3].Id, userList[4].Id, userList[9].Id }
+                CircleMembers = new List<string> { _userList[3].Id, _userList[4].Id, _userList[9].Id }
             };
 
 
-            updateUser = Program.userService.Get(userList[5].Id);
+            updateUser = _userService.Get(_userList[5].Id);
             updateUser.Circles.Add(user5circle1);
             // no blocked users
-            Program.userService.Update(userList[5].Id, updateUser);
+            _userService.Update(_userList[5].Id, updateUser);
 
 
             // user 6 circles + blocked users *******************
             var user6circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[2].Id, userList[3].Id, userList[5].Id, userList[7].Id }
+                CircleMembers = new List<string> { _userList[2].Id, _userList[3].Id, _userList[5].Id, _userList[7].Id }
             };
 
-            updateUser = Program.userService.Get(userList[6].Id);
+            updateUser = _userService.Get(_userList[6].Id);
             updateUser.Circles.Add(user6circle1);
-            updateUser.BlockedUsers.Add(userList[8].Id);
-            Program.userService.Update(userList[6].Id, updateUser);
+            updateUser.BlockedUsers.Add(_userList[8].Id);
+            _userService.Update(_userList[6].Id, updateUser);
 
 
             // user 7 circles + blocked users *******************
             var user7circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[1].Id, userList[5].Id, userList[8].Id }
+                CircleMembers = new List<string> { _userList[1].Id, _userList[5].Id, _userList[8].Id }
             };
             var user7circle2 = new Circle
             {
                 CircleNumber = 2,
-                CircleMembers = new List<string> { userList[1].Id }
+                CircleMembers = new List<string> { _userList[1].Id }
             };
             var user7circle3 = new Circle
             {
                 CircleNumber = 3,
-                CircleMembers = new List<string> { userList[1].Id, userList[3].Id }
+                CircleMembers = new List<string> { _userList[1].Id, _userList[3].Id }
             };
 
-            updateUser = Program.userService.Get(userList[7].Id);
+            updateUser = _userService.Get(_userList[7].Id);
             updateUser.Circles.Add(user7circle1);
             updateUser.Circles.Add(user7circle2);
             updateUser.Circles.Add(user7circle3);
             // no blocked users
-            Program.userService.Update(userList[7].Id, updateUser);
+            _userService.Update(_userList[7].Id, updateUser);
 
 
             // user 8 circles + blocked users *******************
             var user8circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[0].Id, userList[4].Id, userList[5].Id, userList[9].Id }
+                CircleMembers = new List<string> { _userList[0].Id, _userList[4].Id, _userList[5].Id, _userList[9].Id }
             };
             var user8circle2 = new Circle
             {
                 CircleNumber = 2,
-                CircleMembers = new List<string> { userList[1].Id, userList[4].Id, userList[5].Id }
+                CircleMembers = new List<string> { _userList[1].Id, _userList[4].Id, _userList[5].Id }
             };
 
-            updateUser = Program.userService.Get(userList[8].Id);
+            updateUser = _userService.Get(_userList[8].Id);
             updateUser.Circles.Add(user8circle1);
             updateUser.Circles.Add(user8circle2);
             // no blocked users
-            Program.userService.Update(userList[8].Id, updateUser);
+            _userService.Update(_userList[8].Id, updateUser);
 
 
             // user 9 circles + blocked users *******************
             var user9circle1 = new Circle
             {
                 CircleNumber = 1,
-                CircleMembers = new List<string> { userList[2].Id, userList[3].Id }
+                CircleMembers = new List<string> { _userList[2].Id, _userList[3].Id }
             };
             var user9circle2 = new Circle
             {
                 CircleNumber = 2,
-                CircleMembers = new List<string> { userList[0].Id, userList[1].Id, userList[3].Id, userList[6].Id }
+                CircleMembers = new List<string> { _userList[0].Id, _userList[1].Id, _userList[3].Id, _userList[6].Id }
             };
 
-            updateUser = Program.userService.Get(userList[9].Id);
+            updateUser = _userService.Get(_userList[9].Id);
             updateUser.Circles.Add(user9circle1);
             updateUser.Circles.Add(user9circle2);
-            updateUser.BlockedUsers.Add(userList[7].Id);
-            Program.userService.Update(userList[9].Id, updateUser);
+            updateUser.BlockedUsers.Add(_userList[7].Id);
+            _userService.Update(_userList[9].Id, updateUser);
+
+            //////////////////////////////////////////////////////
+
+            var user0 = _userService.Get(_userList[0].Id);
+            var user1 = _userService.Get(_userList[1].Id);
+            var user2 = _userService.Get(_userList[2].Id);
+            var user3 = _userService.Get(_userList[3].Id);
+            var user4 = _userService.Get(_userList[4].Id);
+            var user5 = _userService.Get(_userList[5].Id);
+            var user6 = _userService.Get(_userList[6].Id);
+            var user7 = _userService.Get(_userList[7].Id);
+            var user8 = _userService.Get(_userList[8].Id);
+            var user9 = _userService.Get(_userList[9].Id);
+
+            _postList = new List<Post>
+            {
+                new Post
+                {
+                    PostAuthor = user0.Id,
+                    PostType = "text",
+                    PostContent = "My first post!",
+                    CreationTime = DateTime.Now,
+                    Circles = new List<Circle> { user0.Circles[0] },
+                    Comments = new List<Comment>
+                    {
+                        new Comment
+                        {
+                            CommentAuthor = user1.Id,
+                            CommentText = "Great first post!",
+                            CreationTime = DateTime.Now
+                        },
+
+                        new Comment
+                        {
+                            CommentAuthor = user2.Id,
+                            CommentText = "Nice",
+                            CreationTime = DateTime.Now
+                        }
+                    }
+                },
+            };
+
+            foreach (var p in _postList)
+            {
+                _postService.Create(p);
+
+            }
+
+
+
+
 
 
         }
-        
+
     }
 }

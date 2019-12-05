@@ -11,7 +11,7 @@ namespace SocialNetwork.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [BsonElement("Post Author")] public User PostAuthor { get; set; }
+        [BsonElement("Post Author ID")] public string PostAuthor { get; set; }
         [BsonElement("Post Type")] public string PostType { get; set; }
         [BsonElement("Post Content")] public string PostContent { get; set; }
         [BsonElement("Creation Time")] public DateTime CreationTime { get; set; }

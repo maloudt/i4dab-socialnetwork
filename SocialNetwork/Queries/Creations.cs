@@ -10,12 +10,15 @@ namespace SocialNetwork.Queries
     {
         public void CreatePost(string authorId, string postType, List<string> circles)
         {
-            var currentUser = Program.userService.Get(authorId);
+            var userService = new UserService();
+            var postService = new PostService();
+
+            var currentUser = userService.Get(authorId);
             //var ucircles = currentUser.Circles.Find;
 
             var newPost = new Post
             {
-                PostAuthor = currentUser,
+                PostAuthor = currentUser.Id,
                 PostType = postType,
                 PostContent = "Hello everyone!",
                 CreationTime = DateTime.Now,
@@ -23,7 +26,7 @@ namespace SocialNetwork.Queries
                 Comments = new List<Comment>()
             };
 
-            Program.postService.Create(newPost);
+            postService.Create(newPost);
 
 
             // create_post(owner_id, content, cicles)
