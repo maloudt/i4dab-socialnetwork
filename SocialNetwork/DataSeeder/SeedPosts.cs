@@ -11,13 +11,22 @@ namespace SocialNetwork.DataSeeder
         {
             var post1 = new Post
             {
-                Author = "some-id",
+                PostAuthor = new User(),
                 PostType = "Text",
-                Visibility = "Public",
-                Content = "Hello everyone!",
+                PostContent = "Hello everyone!",
                 CreationTime = DateTime.Now,
-                Comments = new List<string>() {}
+                Circles = new List<Circle>(),
+                Comments = new List<Comment>()
             };
+
+            post1.Comments.Add(new Comment
+                {
+                    CommentAuthor = "Lars Kolund",
+                    CommentText = "",
+                    CreationTime = DateTime.Now
+                }
+            );
+
             Program.postService.Create(post1);
 
         }

@@ -7,17 +7,13 @@ namespace SocialNetwork.Models
 {
     public class Circle
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        [BsonElement("CircleNumber")] public int CircleNumber { get; set; }
+        [BsonElement("Circle Members")] public List<string> CircleMembers { get; set; }
 
-        [BsonElement("User")] public string User { get; set; }
-        [BsonElement("Members")] public List<string> Members { get; set; }
-
-        public override string ToString()
-        {
-            return $"User({Id}, {User}, {Members})";
-        }
+        //public override string ToString()
+        //{
+        //    return $"User({CircleNumber}, {CircleMembers})";
+        //}
 
     }
 }

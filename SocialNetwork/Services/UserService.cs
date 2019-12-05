@@ -46,5 +46,10 @@ namespace SocialNetwork.Services
         {
             _users.DeleteOne(user => user.Id == id);
         }
+
+        public void RemoveAll()
+        {
+            _users.DeleteMany(user => user.Id != null);
+        }
     }
 }

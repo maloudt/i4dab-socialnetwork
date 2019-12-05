@@ -11,47 +11,46 @@ namespace SocialNetwork
     {
         public static UserService userService;
         public static PostService postService;
-        public static CommentService commentService;
-        public static CircleService circleService;
         public static List<User> users;
         public static List<Post> posts;
-        public static List<Comment> comments;
-        public static List<Circle> circles;
 
         private static void Main(string[] args)
         {
             //var userService = new UserService();
             //var postService = new PostService();
-            //var commentService = new CommentService();
 
             //var users = userService.Get();
             //var posts = postService.Get();
-            //var comments = commentService.Get();
 
+            // create services
             userService = new UserService();
             postService = new PostService();
-            commentService = new CommentService();
-            circleService = new CircleService();
 
+
+            //userService.RemoveAll(); // remove all users
+            //postService.RemoveAll(); // remove all posts
+
+            // create seeders
             var userSeeder = new SeedUsers();
             var postSeeder = new SeedPosts();
-            var commentSeeder = new SeedComments();
-            var circleSeeder = new SeedCircles();
+
+            // seed database
             //userSeeder.Seed();
             //postSeeder.Seed();
-            //commentSeeder.Seed();
-            //circleSeeder.Seed();
 
-
+            // get all documents for each entity
             users = userService.Get();
             posts = postService.Get();
-            comments = commentService.Get();
-            circles = circleService.Get();
 
+            // change age of user with id 5ddf94f488c93b464c45dc34
+            //var userTest = userService.Get("5ddf94f488c93b464c45dc34");
+            //userTest.Age = 35;
+            //userService.Update("5ddf94f488c93b464c45dc34", userTest);
+
+            // print result
             var printer = new Printer();
             printer.PrintStartScreen();
 
-            
 
             //foreach (var u in users) Console.WriteLine(u);
             //foreach (var p in posts) Console.WriteLine(p);

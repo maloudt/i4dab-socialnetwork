@@ -11,17 +11,16 @@ namespace SocialNetwork.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [BsonElement("Author")] public string Author { get; set; }
+        [BsonElement("Post Author")] public User PostAuthor { get; set; }
         [BsonElement("Post Type")] public string PostType { get; set; }
-        [BsonElement("Visibility")] public string Visibility { get; set; }
-        [BsonElement("Content")] public string Content { get; set; }
+        [BsonElement("Post Content")] public string PostContent { get; set; }
         [BsonElement("Creation Time")] public DateTime CreationTime { get; set; }
+        [BsonElement("Circles")] public List<Circle> Circles { get; set; }
+        [BsonElement("Comments")] public List<Comment> Comments { get; set; }
 
-        [BsonElement("Comments")] public List<string> Comments { get; set; }
-
-        public override string ToString()
-        {
-            return $"Post({Id}, {Author}, {PostType}, {Visibility}, {Content}, {CreationTime}, {Comments})";
-        }
+        //public override string ToString()
+        //{
+        //    return $"Post({Id}, {PostAuthor}, {PostType}, {PostContent}, {CreationTime}, {Circles}, {Comments})";
+        //}
     }
 }
