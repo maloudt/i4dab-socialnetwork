@@ -17,10 +17,5 @@ namespace SocialNetwork.Models
         [BsonElement("Gender")] public string Gender { get; set; }
         [BsonElement("Circles")] public List<Circle> Circles { get; set; }
         [BsonElement("Blocked Users")] public List<string> BlockedUsers { get; set; }
-
-        //public override string ToString()
-        //{
-        //    return $"User({Id}, {Name}, {Age}, {Gender}, C: {Circles}, B: {BlockedUsers})";
-        //}
     }
 }

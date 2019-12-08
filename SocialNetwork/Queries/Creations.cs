@@ -6,36 +6,39 @@ using SocialNetwork.Services;
 
 namespace SocialNetwork.Queries
 {
-    class Creations
+    internal class Creations
     {
-        public void CreatePost(string authorId, string postType, List<string> circles)
+        private readonly PostService _postService;
+        public Creations()
         {
-            var userService = new UserService();
-            var postService = new PostService();
+            _postService = new PostService();
+        }
 
-            var currentUser = userService.Get(authorId);
-            //var ucircles = currentUser.Circles.Find;
-
+        public void CreatePost(User author, string postType, string content, List<Circle> circles)
+        {
             var newPost = new Post
             {
-                PostAuthor = currentUser.Id,
+                PostAuthor = author.Id,
                 PostType = postType,
-                PostContent = "Hello everyone!",
+                PostContent = content,
                 CreationTime = DateTime.Now,
-                Circles = new List<Circle>(),
+                Circles = circles,
                 Comments = new List<Comment>()
             };
 
-            postService.Create(newPost);
-
-
-            // create_post(owner_id, content, cicles)
-            // type must be either text, picture, video, poll etch
+            _postService.Create(newPost);
         }
 
-        public void CreateComment()
+        public void CreateComment(User author, Post post, string comment)
         {
-        // create _comment(post_id, comment)
+            var newComment = new Comment
+            {
+                CommentAuthor = author.Id,
+                CommentText = comment
+            };
+
+            post.Comments.Add(newComment);
+            _postService.Update(post.Id, post);
         }
 
     }

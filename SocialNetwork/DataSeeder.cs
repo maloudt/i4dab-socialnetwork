@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using MongoDB.Bson;
 using SocialNetwork.Models;
 using SocialNetwork.Services;
 
@@ -22,8 +20,12 @@ namespace SocialNetwork
 
         public void Seed()
         {
+            // first remove everything in database
             _userService.RemoveAll();
             _postService.RemoveAll();
+
+
+            // CREATE USERS **********************************
 
             // create a list of users and add users to it
             _userList = new List<User>
@@ -119,9 +121,8 @@ namespace SocialNetwork
                 }
             };
 
-            // **************************************************
 
-            // add users to database as
+            // add users to database ****************************
             foreach (var u in _userList)
             {
                 _userService.Create(u);
@@ -317,8 +318,12 @@ namespace SocialNetwork
             updateUser.BlockedUsers.Add(_userList[7].Id);
             _userService.Update(_userList[9].Id, updateUser);
 
-            //////////////////////////////////////////////////////
 
+
+
+            // CREATE POSTS **********************************
+
+            // first get all users (to get db users with the added circles+blocked)
             var user0 = _userService.Get(_userList[0].Id);
             var user1 = _userService.Get(_userList[1].Id);
             var user2 = _userService.Get(_userList[2].Id);
@@ -330,6 +335,7 @@ namespace SocialNetwork
             var user8 = _userService.Get(_userList[8].Id);
             var user9 = _userService.Get(_userList[9].Id);
 
+            // list containing all posts to be created *******
             _postList = new List<Post>
             {
                 new Post
@@ -337,7 +343,7 @@ namespace SocialNetwork
                     PostAuthor = user0.Id,
                     PostType = "text",
                     PostContent = "My first post!",
-                    CreationTime = DateTime.Now,
+                    CreationTime = DateTime.Now.AddMinutes(-60),
                     Circles = new List<Circle> { user0.Circles[0] },
                     Comments = new List<Comment>
                     {
@@ -345,31 +351,61 @@ namespace SocialNetwork
                         {
                             CommentAuthor = user1.Id,
                             CommentText = "Great first post!",
-                            CreationTime = DateTime.Now
+                            CreationTime = DateTime.Now.AddMinutes(-50)
                         },
 
                         new Comment
                         {
                             CommentAuthor = user2.Id,
                             CommentText = "Nice",
-                            CreationTime = DateTime.Now
+                            CreationTime = DateTime.Now.AddMinutes(-40)
+                        }
+                    }
+                },
+
+                new Post
+                {
+                    PostAuthor = user0.Id,
+                    PostType = "text",
+                    PostContent = "My second post!",
+                    CreationTime = DateTime.Now.AddMinutes(-30),
+                    Circles = new List<Circle> { user0.Circles[1] },
+                    Comments = new List<Comment>
+                    {
+                        new Comment
+                        {
+                            CommentAuthor = user2.Id,
+                            CommentText = "Cool story bro",
+                            CreationTime = DateTime.Now.AddMinutes(-10)
+                        }
+                    }
+                },
+
+                new Post
+                {
+                    PostAuthor = user1.Id,
+                    PostType = "image",
+                    PostContent = "https://i.imgur.com/uitca9Y.jpg",
+                    CreationTime = DateTime.Now.AddMinutes(-10),
+                    Circles = new List<Circle> { user1.Circles[0] },
+                    Comments = new List<Comment>
+                    {
+                        new Comment
+                        {
+                            CommentAuthor = user2.Id,
+                            CommentText = "Cool pic",
+                            CreationTime = DateTime.Now.AddMinutes(-5)
                         }
                     }
                 },
             };
 
+            // add posts to db *******************************
             foreach (var p in _postList)
             {
                 _postService.Create(p);
 
             }
-
-
-
-
-
-
         }
-
     }
 }

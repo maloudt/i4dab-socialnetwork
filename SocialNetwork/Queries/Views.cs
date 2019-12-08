@@ -1,21 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SocialNetwork.Models;
+using SocialNetwork.Services;
+using Console = System.Console;
 
-namespace SocialNetwork.Views
+namespace SocialNetwork.Queries
 {
-    class Views
+    internal class Views
     {
-        public void ViewUserFeed()
+        private readonly UserService _userService;
+        private readonly PostService _postService;
+        public Views()
         {
-            // feed(logged_in_user_id) -> show the users feed - including
-            // the latest xx posts the uses has access rights
+            _userService = new UserService();
+            _postService = new PostService();
+        }
+        public void ViewUserFeed(User loggedInAs)
+        {
+            var circles = _userService.GetCirclesThatIncludeUser(loggedInAs);
+            
+            Console.WriteLine($"{loggedInAs.Name} is in {circles.Count} circles");
+
+            var posts = new List<Post>();
+            
+            foreach (var c in circles)
+            {
+                var circlePosts = _postService.GetPostsFromCircle(c);
+
+                posts.AddRange(circlePosts);
+            }
+
+            posts.AddRange(_postService.GetPostsFromUser(loggedInAs));
+
+            posts.Sort((x, y) => DateTime.Compare(x.CreationTime, y.CreationTime));
+
+            Console.WriteLine();
+            Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            Console.WriteLine($"Viewing feed of {loggedInAs.Name}");
+            Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+            foreach (var p in posts)
+            {
+                Console.WriteLine($"---------------------------------------------------");
+
+                Console.WriteLine($"Date:");
+                Console.WriteLine($"  {p.CreationTime}");
+                Console.WriteLine();
+                Console.WriteLine($"Post:");
+                Console.WriteLine($"  {p.PostContent}");
+                Console.WriteLine();
+
+                Console.WriteLine($"Comments:");
+                foreach (var c in p.Comments)
+                {
+                    Console.WriteLine($"  Date:    {c.CreationTime} ");
+                    Console.WriteLine($"  Author:  {_userService.Get(c.CommentAuthor).Name} ");
+                    Console.WriteLine($"  Comment: {c.CommentText}\n");
+                }
+            }
         }
 
-        public void ViewUserWall()
+        public void ViewUserWall(User loggedInAs, User viewing)
         {
-            // wall(user_id, guest_id) -> show the wall, including at least the
-            // latest xx posts from the user, which the guest_id user has access rights to
+            var allPosts = _postService.GetPostsFromUser(viewing);
+            var posts = new List<Post>();
+            foreach (var p in allPosts)
+            {
+                var circles = p.Circles;
+
+                var containsViewing = false;
+
+                foreach (var c in circles)
+                {
+                    if (c.CircleMembers.Contains(loggedInAs.Id))
+                    {
+                        containsViewing = true;
+                    }
+                }
+
+                if (containsViewing == true)
+                {
+                    posts.Add(p);
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            Console.WriteLine($"Viewing wall of {viewing.Name}");
+            Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+            foreach (var p in posts)
+            {
+                Console.WriteLine($"---------------------------------------------------");
+
+                Console.WriteLine($"Date:");
+                Console.WriteLine($"  {p.CreationTime}");
+                Console.WriteLine();
+                Console.WriteLine($"Post:");
+                Console.WriteLine($"  {p.PostContent}");
+                Console.WriteLine();
+
+                Console.WriteLine($"Comments:");
+                foreach (var c in p.Comments)
+                {
+                    Console.WriteLine($"  Date:    {c.CreationTime} ");
+                    Console.WriteLine($"  Author:  {_userService.Get(c.CommentAuthor).Name} ");
+                    Console.WriteLine($"  Comment: {c.CommentText}\n");
+                }
+            }
+
         }
 
     }
