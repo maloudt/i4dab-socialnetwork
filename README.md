@@ -1,5 +1,11 @@
 # i4dab-socialnetwork
 
+NoSqlGroup19
+* Marie-Louise Troelsen (201510409)
+* Thomas Vittrup Bærentsen (201606351)
+* Lea Mo Føste Andersen (201703769)
+* Sahand Matten (201506510)
+
 * Et ER diagram der beskriver databasen er vedlagt projektet
 * Programmet opretter selv en database med navnet'SocialNetworkDb', men ønskes dette ændret findes denne definition i Services/PostService og Services/UserService (skal ændres begge steder)
 * Programmet fungerer som et consol-program

@@ -112,5 +112,17 @@ namespace SocialNetwork.Queries
 
         }
 
+        public void ViewUserCircles(User user)
+        {
+            foreach (var c in user.Circles)
+            {
+                Console.Write($"Circle # {c.CircleNumber}: ");
+                foreach (var m in c.CircleMembers)
+                {
+                    Console.Write($"{_userService.Get(m).Name}, ");
+                }
+            }
+        }
+
     }
 }

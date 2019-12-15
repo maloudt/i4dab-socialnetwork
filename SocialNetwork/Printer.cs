@@ -14,6 +14,7 @@ namespace SocialNetwork
         private readonly List<User> _users;
         private readonly Views _view;
         private readonly Creations _creation;
+        public User LoggedIn { get; set; } = null;
 
         public Printer()
         {
@@ -25,57 +26,165 @@ namespace SocialNetwork
 
         public void PrintStartScreen()
         {
-            Console.WriteLine("All users:");
-            foreach (var u in _users) Console.WriteLine($"  {u.Name}, {u.Age}, {u.Gender}");
+            if (LoggedIn == null)
+            {
+                Console.WriteLine(" 1: Log in");
+                Console.WriteLine(" 2: Create user");
+                Console.WriteLine(" 3: View user profile/wall");
+            }
 
-            Console.WriteLine("What do you wish to do?");
-            Console.WriteLine(" 1: View feed");
-            Console.WriteLine(" 2: View wall");
-            Console.WriteLine(" 3: Create post");
+            else
+            {
+                Console.WriteLine(" 1: View feed");
+                Console.WriteLine(" 2: View user profile/wall");
+                Console.WriteLine(" 3: View/edit circles");
+                Console.WriteLine(" 4: Create post");
+                Console.WriteLine(" 5: Log out");
+            }
 
 
             var input = Console.ReadKey();
             Console.WriteLine();
 
-            switch (input.Key)
+            if (LoggedIn == null)
             {
-                case D1:
-                    PrintFeed();
-                    break;
-                case D2:
-                    PrintWall();
-                    break;
-                case D3:
-                    PrintCreatePost();
-                    break;
+                try
+                {
+                    switch (input.Key)
+                    {
+                        case D1:
+                            PrintLogin();
+                            break;
+                        case D2:
+                            PrintCreateUser();
+                            break;
+                        case D3:
+                            PrintWall();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                catch (ArgumentOutOfRangeException e)
+                {
+                    Console.WriteLine("---\nUknown command, please try again\n---\n");
+                }
             }
+            else
+            {
+                try
+                {
+                    switch (input.Key)
+                    {
+                        case D1:
+                            PrintFeed();
+                            break;
+                        case D2:
+                            PrintWall();
+                            break;
+                        case D3:
+                            PrintCircles();
+                            break;
+                        case D4:
+                            PrintCreatePost();
+                            break;
+                        case D5:
+                            PrintLogout();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                catch (ArgumentOutOfRangeException e)
+                {
+                    Console.WriteLine("---\nUknown command, please try again\n---\n");
+                }
+            }
+
+        }
+
+        public void PrintLogin()
+        {
+            Console.WriteLine("Log in as:");
+            LoggedIn = _userService.GetUserFromName(Console.ReadLine());
+        }
+
+        public void PrintLogout()
+        {
+            LoggedIn = null;
+            PrintStartScreen();
+        }
+
+        public void PrintCreateUser()
+        {
+            Console.WriteLine("Name:");
+            var name = Console.ReadLine();
+            Console.WriteLine("Age:");
+            var age = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Gender:");
+            var gender = Console.ReadLine();
+
+            _creation.CreateUser(name, age, gender);
+        }
+
+        public void PrintCircles()
+        {
+            _view.ViewUserCircles(LoggedIn);
+
+            Console.WriteLine(" 1: Add user to circle");
+            Console.WriteLine(" 2: Remove user from circle");
+            Console.WriteLine(" 3: Add circle");
+            Console.WriteLine(" 4: Remove circle");
+
+            var input = Console.ReadKey();
+            Console.WriteLine();
+
+            try
+            {
+                switch (input.Key)
+                {
+                    case D1:
+                        PrintAddToCircle();
+                        break;
+                    case D2:
+                        PrintRemoveFromCircle();
+                        break;
+                    case D3:
+                        PrintAddCircle();
+                        break;
+                    case D4:
+                        PrintRemoveCircle();
+                        break;
+                    case D5:
+                        PrintLogout();
+                        break;
+                }
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.WriteLine("---\nUknown command, please try again\n---\n");
+            }
+
         }
 
         public void PrintWall()
         {
-            Console.WriteLine("Who do you wish to log in as?");
-            var loggedIn = _userService.GetUserFromName(Console.ReadLine());
-
             Console.WriteLine("Which users wall do you want to see?");
             var user = _userService.GetUserFromName(Console.ReadLine());
 
-            _view.ViewUserWall(loggedIn, user);
+            _view.ViewUserWall(LoggedIn, user);
         }
 
         public void PrintFeed()
         {
-            Console.WriteLine("Which users feed do you want to see?");
-            var user = _userService.GetUserFromName(Console.ReadLine());
-
-            _view.ViewUserFeed(user);
+            _view.ViewUserFeed(LoggedIn);
         }
 
         public void PrintCreatePost()
         {
-            Console.WriteLine("Create new post:");
-            Console.WriteLine("Who is the author of the post?");
-            var name = Console.ReadLine();
-            var user = _userService.GetUserFromName(name);
+            var user = LoggedIn;
             Console.WriteLine("What type of post? (text, image or video)");
             var type = Console.ReadLine();
             Console.WriteLine("What of the following circles should the post be visible in? (input fx: '1, 2')");
@@ -106,16 +215,41 @@ namespace SocialNetwork
         {
             Console.WriteLine("Create new comment:");
 
-            Console.WriteLine("Who is the author of the comment?");
-            var name = Console.ReadLine();
-
-            var user = _userService.GetUserFromName(name);
+            var user = LoggedIn;
 
             Console.WriteLine("Enter comment text:");
             var content = Console.ReadLine();
 
             //creation.CreateComment(user, post, content);
             //Console.WriteLine("Comment created");
+        }
+
+        public void PrintAddToCircle()
+        {
+            Console.WriteLine("Which circle?");
+            var circle = _userService.GetCircleFromCircleNumber(LoggedIn, Convert.ToInt32(Console.ReadLine()));
+            Console.WriteLine("Which user do you want to add to the circle?");
+            circle.CircleMembers.Add(_userService.GetUserFromName(Console.ReadLine()).Id);
+        }
+
+        public void PrintRemoveFromCircle()
+        {
+            Console.WriteLine("Which circle?");
+            var circle = _userService.GetCircleFromCircleNumber(LoggedIn, Convert.ToInt32(Console.ReadLine()));
+            Console.WriteLine("Which user do you want to remove from the circle?");
+            circle.CircleMembers.Remove(_userService.GetUserFromName(Console.ReadLine()).Id);
+        }
+
+        public void PrintAddCircle()
+        {
+            _creation.CreateCircle(LoggedIn);
+        }
+
+        public void PrintRemoveCircle()
+        {
+            Console.WriteLine("Which circle do you wish to delete?");
+            var circle = _userService.GetCircleFromCircleNumber(LoggedIn, Console.ReadKey().KeyChar);
+            LoggedIn.Circles.Remove(circle);
         }
     }
 }
