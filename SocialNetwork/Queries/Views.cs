@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using SocialNetwork.Models;
 using SocialNetwork.Services;
@@ -11,10 +12,14 @@ namespace SocialNetwork.Queries
     {
         private readonly UserService _userService;
         private readonly PostService _postService;
+        private readonly Creations _creation;
+
         public Views()
         {
             _userService = new UserService();
             _postService = new PostService();
+            _creation = new Creations();
+
         }
         public void ViewUserFeed(User loggedInAs)
         {
@@ -40,76 +45,132 @@ namespace SocialNetwork.Queries
             Console.WriteLine($"Viewing feed of {loggedInAs.Name}");
             Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
-            foreach (var p in posts)
+            for (int i = 0; i < posts.Count; i++)
             {
                 Console.WriteLine($"---------------------------------------------------");
-
+                Console.WriteLine($"Post #:");
+                Console.WriteLine($"  {i}");
                 Console.WriteLine($"Date:");
-                Console.WriteLine($"  {p.CreationTime}");
+                Console.WriteLine($"  {posts[i].CreationTime}");
                 Console.WriteLine();
                 Console.WriteLine($"Post:");
-                Console.WriteLine($"  {p.PostContent}");
+                Console.WriteLine($"  {posts[i].PostContent}");
                 Console.WriteLine();
 
                 Console.WriteLine($"Comments:");
-                foreach (var c in p.Comments)
+                foreach (var c in posts[i].Comments)
                 {
                     Console.WriteLine($"  Date:    {c.CreationTime} ");
                     Console.WriteLine($"  Author:  {_userService.Get(c.CommentAuthor).Name} ");
                     Console.WriteLine($"  Comment: {c.CommentText}\n");
                 }
             }
+            CreateComment(posts, loggedInAs);
         }
 
         public void ViewUserWall(User loggedInAs, User viewing)
         {
-            var allPosts = _postService.GetPostsFromUser(viewing);
-            var posts = new List<Post>();
-            foreach (var p in allPosts)
+            if (!viewing.BlockedUsers.Contains(loggedInAs.Id))
             {
-                var circles = p.Circles;
-
-                var containsViewing = false;
-
-                foreach (var c in circles)
+                var allPosts = _postService.GetPostsFromUser(viewing);
+                var posts = new List<Post>();
+                foreach (var p in allPosts)
                 {
-                    if (c.CircleMembers.Contains(loggedInAs.Id))
+                    var circles = p.Circles;
+
+                    var containsViewing = false;
+
+                    foreach (var c in circles)
                     {
-                        containsViewing = true;
+                        if (c.CircleMembers.Contains(loggedInAs.Id))
+                        {
+                            containsViewing = true;
+                        }
+                    }
+
+                    if (containsViewing == true)
+                    {
+                        posts.Add(p);
+                    }
+
+                    if (p.IsPublic == true)
+                    {
+                        if (!posts.Contains(p))
+                        {
+                            posts.Add(p);
+                        }
                     }
                 }
 
-                if (containsViewing == true)
+                Console.WriteLine();
+                Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                Console.WriteLine($"Viewing wall of {viewing.Name}");
+                Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
+                for (int i = 0; i < posts.Count; i++)
                 {
-                    posts.Add(p);
+                    Console.WriteLine($"---------------------------------------------------");
+
+                    Console.WriteLine($"Post #:");
+                    Console.WriteLine($"  {i}");
+                    Console.WriteLine($"Date:");
+                    Console.WriteLine($"  {posts[i].CreationTime}");
+                    Console.WriteLine();
+                    Console.WriteLine($"Post:");
+                    Console.WriteLine($"  {posts[i].PostContent}");
+                    Console.WriteLine();
+
+                    Console.WriteLine($"Comments:");
+
+                    foreach (var c in posts[i].Comments)
+                    {
+                        Console.WriteLine($"  Date:    {c.CreationTime} ");
+                        Console.WriteLine($"  Author:  {_userService.Get(c.CommentAuthor).Name} ");
+                        Console.WriteLine($"  Comment: {c.CommentText}\n");
+                    }
                 }
+                CreateComment(posts, loggedInAs);
             }
-
-            Console.WriteLine();
-            Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            Console.WriteLine($"Viewing wall of {viewing.Name}");
-            Console.WriteLine($"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
-            foreach (var p in posts)
+            else
             {
-                Console.WriteLine($"---------------------------------------------------");
+                Console.WriteLine("This user has blocked you");
+            }
 
-                Console.WriteLine($"Date:");
-                Console.WriteLine($"  {p.CreationTime}");
-                Console.WriteLine();
-                Console.WriteLine($"Post:");
-                Console.WriteLine($"  {p.PostContent}");
-                Console.WriteLine();
+        }
 
-                Console.WriteLine($"Comments:");
-                foreach (var c in p.Comments)
+        public void CreateComment(List<Post> posts, User loggedInAs)
+        {
+            Console.WriteLine(" 1: Comment on post");
+            Console.WriteLine(" Press enter to go back");
+
+
+            var input = Console.ReadKey();
+            Console.WriteLine();
+
+            try
+            {
+                switch (input.Key)
                 {
-                    Console.WriteLine($"  Date:    {c.CreationTime} ");
-                    Console.WriteLine($"  Author:  {_userService.Get(c.CommentAuthor).Name} ");
-                    Console.WriteLine($"  Comment: {c.CommentText}\n");
+                    case ConsoleKey.D1:
+
+                        Console.WriteLine("On which post?");
+                        var post = posts[Convert.ToInt32(Console.ReadLine())];
+
+                        Console.WriteLine("Enter comment text:");
+                        var content = Console.ReadLine();
+
+                        _creation.CreateComment(loggedInAs, post, content);
+                        Console.WriteLine("Comment created");
+                        break;
+                    default:
+                        break;
                 }
             }
 
+            catch (ArgumentOutOfRangeException)
+            {
+                Console.WriteLine("---\nUnknown command, please try again\n---\n");
+            }
         }
 
         public void ViewUserCircles(User user)

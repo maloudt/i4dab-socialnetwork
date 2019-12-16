@@ -38,8 +38,9 @@ namespace SocialNetwork
                 Console.WriteLine(" 1: View feed");
                 Console.WriteLine(" 2: View user profile/wall");
                 Console.WriteLine(" 3: View/edit circles");
-                Console.WriteLine(" 4: Create post");
-                Console.WriteLine(" 5: Log out");
+                Console.WriteLine(" 4: Block user");
+                Console.WriteLine(" 5: Create post");
+                Console.WriteLine(" 6: Log out");
             }
 
 
@@ -66,9 +67,9 @@ namespace SocialNetwork
                     }
                 }
 
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("---\nUknown command, please try again\n---\n");
+                    Console.WriteLine("---\nUnknown command, please try again\n---\n");
                 }
             }
             else
@@ -87,9 +88,12 @@ namespace SocialNetwork
                             PrintCircles();
                             break;
                         case D4:
-                            PrintCreatePost();
+                            PrintBlockUser();
                             break;
                         case D5:
+                            PrintCreatePost();
+                            break;
+                        case D6:
                             PrintLogout();
                             break;
                         default:
@@ -97,9 +101,9 @@ namespace SocialNetwork
                     }
                 }
 
-                catch (ArgumentOutOfRangeException e)
+                catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("---\nUknown command, please try again\n---\n");
+                    Console.WriteLine("---\nUnknown command, please try again\n---\n");
                 }
             }
 
@@ -162,9 +166,9 @@ namespace SocialNetwork
                         break;
                 }
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
-                Console.WriteLine("---\nUknown command, please try again\n---\n");
+                Console.WriteLine("---\nUnknown command, please try again\n---\n");
             }
 
         }
@@ -187,7 +191,22 @@ namespace SocialNetwork
             var user = LoggedIn;
             Console.WriteLine("What type of post? (text, image or video)");
             var type = Console.ReadLine();
-            Console.WriteLine("What of the following circles should the post be visible in? (input fx: '1, 2')");
+            Console.WriteLine("Should the post be public?");
+            var isPublic = false;
+            if (Console.ReadLine()=="yes")
+            {
+                isPublic = true;
+            }
+            else if (Console.ReadLine() == "no")
+            {
+                isPublic = false;
+            }
+            else
+            {
+                Console.WriteLine("---\nUnknown command, please try again\n---\n");
+            }
+
+            Console.WriteLine("Which of the following circles should the post be visible in? (input fx: '1' or '1, 2')");
             foreach (var c in user.Circles)
             {
                 Console.Write($"{c.CircleNumber}, ");
@@ -195,33 +214,24 @@ namespace SocialNetwork
 
             Console.WriteLine();
             var circleString = Console.ReadLine();
-            var circleSplit = circleString.Split(",").Select(int.Parse).ToList();
             var circleList = new List<Circle>();
 
-            foreach (var c in circleSplit)
+            if (!string.IsNullOrEmpty(circleString))
             {
-                circleList.Add(_userService.GetCircleFromCircleNumber(user, c));
+                var circleSplit = circleString.Split(",").Select(int.Parse).ToList();
+                
+                foreach (var c in circleSplit)
+                {
+                    circleList.Add(_userService.GetCircleFromCircleNumber(user, c));
+                }
             }
 
             Console.WriteLine("Enter post content (text, image url or video url)");
             var content = Console.ReadLine();
 
-            _creation.CreatePost(user, type, content, circleList);
-            
+            _creation.CreatePost(user, type, content, isPublic, circleList);
+
             Console.WriteLine("Post created");
-        }
-
-        public void PrintCreateComment()
-        {
-            Console.WriteLine("Create new comment:");
-
-            var user = LoggedIn;
-
-            Console.WriteLine("Enter comment text:");
-            var content = Console.ReadLine();
-
-            //creation.CreateComment(user, post, content);
-            //Console.WriteLine("Comment created");
         }
 
         public void PrintAddToCircle()
@@ -250,6 +260,12 @@ namespace SocialNetwork
             Console.WriteLine("Which circle do you wish to delete?");
             var circle = _userService.GetCircleFromCircleNumber(LoggedIn, Console.ReadKey().KeyChar);
             LoggedIn.Circles.Remove(circle);
+        }
+
+        public void PrintBlockUser()
+        {
+            Console.WriteLine("What user do you want to block?");
+            LoggedIn.BlockedUsers.Add(_userService.GetUserFromName(Console.ReadLine()).Id);
         }
     }
 }

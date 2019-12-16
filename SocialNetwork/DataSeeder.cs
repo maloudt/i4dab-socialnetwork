@@ -344,6 +344,7 @@ namespace SocialNetwork
                     PostType = "text",
                     PostContent = "My first post!",
                     CreationTime = DateTime.Now.AddMinutes(-60),
+                    IsPublic = true,
                     Circles = new List<Circle> { user0.Circles[0] },
                     Comments = new List<Comment>
                     {
@@ -369,6 +370,7 @@ namespace SocialNetwork
                     PostType = "text",
                     PostContent = "My second post!",
                     CreationTime = DateTime.Now.AddMinutes(-30),
+                    IsPublic = false,
                     Circles = new List<Circle> { user0.Circles[1] },
                     Comments = new List<Comment>
                     {
@@ -387,6 +389,7 @@ namespace SocialNetwork
                     PostType = "image",
                     PostContent = "https://i.imgur.com/uitca9Y.jpg",
                     CreationTime = DateTime.Now.AddMinutes(-10),
+                    IsPublic = false,
                     Circles = new List<Circle> { user1.Circles[0] },
                     Comments = new List<Comment>
                     {

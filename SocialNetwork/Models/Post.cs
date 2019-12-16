@@ -15,6 +15,7 @@ namespace SocialNetwork.Models
         [BsonElement("Post Type")] public string PostType { get; set; }
         [BsonElement("Post Content")] public string PostContent { get; set; }
         [BsonElement("Creation Time")] public DateTime CreationTime { get; set; }
+        [BsonElement("Is Public")] public bool IsPublic { get; set; }
         [BsonElement("Circles")] public List<Circle> Circles { get; set; }
         [BsonElement("Comments")] public List<Comment> Comments { get; set; }
     }

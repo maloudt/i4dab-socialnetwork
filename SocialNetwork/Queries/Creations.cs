@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using SocialNetwork.Models;
 using SocialNetwork.Services;
@@ -31,7 +32,7 @@ namespace SocialNetwork.Queries
             _userService.Create(newUser);
         }
 
-        public void CreatePost(User author, string postType, string content, List<Circle> circles)
+        public void CreatePost(User author, string postType, string content, bool isPublic, List<Circle> circles)
         {
             var newPost = new Post
             {
@@ -39,6 +40,7 @@ namespace SocialNetwork.Queries
                 PostType = postType,
                 PostContent = content,
                 CreationTime = DateTime.Now,
+                IsPublic = isPublic,
                 Circles = circles,
                 Comments = new List<Comment>()
             };
@@ -51,7 +53,8 @@ namespace SocialNetwork.Queries
             var newComment = new Comment
             {
                 CommentAuthor = author.Id,
-                CommentText = comment
+                CommentText = comment,
+                CreationTime = DateTime.Now
             };
 
             post.Comments.Add(newComment);
